@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pets.mapper.ConverseMapper">
+
+    <select id="queryCustomerList" resultType="com.pets.pojo.vo.ConverseVO">
+        select pc.id, pc.username, pc.name, pc.image,
+        COUNT(wm.id) as isRead
+        from pet_customer pc
+        LEFT JOIN websocket_message wm on wm.sender = pc.username and wm.receiver = #{username} and wm.isRead = 1
+        <where>
+            <if test="searchName != null">
+                pc.name like concat('%',#{searchName},'%')
+            </if>
+        </where>
+        GROUP BY pc.id;
+    </select>
+
+    <select id="queryEmpList" resultType="com.pets.pojo.vo.ConverseVO">
+        select pc.id, pc.username, pc.name, pc.image,
+        COUNT(wm.id) as isRead
+        from pet_emp pc
+        LEFT JOIN websocket_message wm on wm.sender = pc.username and wm.receiver = username and wm.isRead = 1
+        <where>
+            <if test="searchName != null">
+                pc.name like concat('%',#{searchName},'%')
+            </if>
+        </where>
+        GROUP BY pc.id;
+    </select>
+
+    <insert id="insertOneMessage" parameterType="com.pets.webSocket.pojo.Message">
+        insert into websocket_message
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="sender != null and sender != ''">
+                sender,
+            </if>
+            <if test="receiver != null and receiver != ''">
+                receiver,
+            </if>
+            <if test="sendType != null and sendType >= 0">
+                sendType,
+            </if>
+            <if test="receiverType != null and receiverType >= 0">
+                receiverType,
+            </if>
+            <if test="message != null and message != ''">
+                message,
+            </if>
+            <if test="messageCover != null and messageCover != ''">
+                messageCover,
+            </if>
+            <if test="messageLength != null and messageLength != ''">
+                messageLength,
+            </if>
+            <if test="messageType != null and messageType >= 0">
+                messageType,
+            </if>
+        </trim>
+        <trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+            <if test="sender != null and sender != ''">
+                #{sender},
+            </if>
+            <if test="receiver != null and receiver != ''">
+                #{receiver},
+            </if>
+            <if test="sendType != null and sendType >= 0">
+                #{sendType},
+            </if>
+            <if test="receiverType != null and receiverType >= 0">
+                #{receiverType},
+            </if>
+            <if test="message != null and message != ''">
+                #{message},
+            </if>
+            <if test="messageCover != null and messageCover != ''">
+                #{messageCover},
+            </if>
+            <if test="messageLength != null and messageLength != ''">
+                #{messageLength},
+            </if>
+            <if test="messageType != null and messageType >= 0">
+                #{messageType},
+            </if>
+        </trim>
+    </insert>
+
+    <select id="queryOnePersonMessage" resultType="com.pets.webSocket.pojo.Message">
+        select sender, receiver, sendType, receiverType, message, messageType, messageCover, messageLength
+        from websocket_message
+        <where>
+            status = 0
+            <if test="sender != null and sender != ''">
+                and (sender = #{sender} or receiver = #{sender})
+            </if>
+            <if test="receiver!= null and receiver != ''">
+                and (sender = #{receiver} or receiver = #{receiver})
+            </if>
+        </where>
+        order by id desc
+        LIMIT 20 OFFSET #{converseNum}
+    </select>
+
+    <select id="countEmpWorkLoad" resultType="com.pets.webSocket.pojo.EmpWorkLoadVO">
+        <!-- 这里假设empOnlineList是一个List类型，通过循环生成每个员工对应的子查询，并用UNION ALL连接 -->
+        <foreach collection="empOnlineList" item="emp" separator="UNION ALL">
+            SELECT COUNT(wm.id) as workLoad, #{emp} as username
+            FROM websocket_message wm
+            WHERE wm.sender = #{emp}
+            AND wm.status = 0
+            <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+                AND wm.sendtime BETWEEN #{startTime} and #{endTime}
+            </if>
+        </foreach>
+    </select>
+
+
+</mapper>

@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pets.mapper.PetShoppingMapper">
+
+    <select id="noPageQueryAllShopping" resultType="com.pets.pojo.vo.PetShoppingVO">
+        SELECT id, name, description, price, stock, shoppingTypeId, image
+        from pet_shopping
+        where status = 0
+        order by id
+    </select>
+
+    <select id="queryAllShoppingType" resultType="java.lang.String">
+        select name
+        from shopping_type
+        where status = 0
+        order by typeId
+    </select>
+
+    <select id="queryAllShoppingTypeId" resultType="java.lang.Integer">
+        select typeId
+        from shopping_type
+        where status = 0
+        order by typeId
+    </select>
+
+    <select id="queryShoppingStock" resultType="com.pets.pojo.vo.ShoppingStockVO">
+        select id, stock
+        from pet_shopping
+            <where>
+                status = 0
+                <if test="shoppingIdList != null and shoppingIdList.size() > 0">
+                    And id IN
+                    <foreach collection="shoppingIdList" item="id" open="(" separator="," close=")">
+                        #{id}
+                    </foreach>
+                </if>
+                <if test="shoppingIdList == null or shoppingIdList.size() == 0">
+                    1 = 0  <!-- 这个条件确保查询不会返回任何结果 -->
+                </if>
+            </where>
+    </select>
+
+    <update id="updateShoppingStock" parameterType="java.util.List">
+        UPDATE pet_shopping
+        <trim prefix="set" suffixOverrides=",">
+            <trim prefix="stock = case" suffix=" end,">
+                <foreach collection="shoppingStockVOS" item="item" index="index">
+                    WHEN id = #{item.id} THEN #{item.stock}
+                </foreach>
+            </trim>
+        </trim>
+        WHERE id IN
+        <foreach collection="shoppingStockVOS" item="item" open="(" separator="," close=")">
+            #{item.id}
+        </foreach>
+    </update>
+
+    <select id="queryAllShopping" resultType="com.pets.pojo.vo.ShoppingVO">
+        select id, name, price, stock, createDate, updateDate, shoppingTypeId, status
+        from pet_shopping
+        <where>
+            <if test="name != null and name != ''">
+                name like concat('%',#{name},'%')
+            </if>
+            <if test="status >= 0 and status != null">
+                and status = #{status}
+            </if>
+            <if test="shoppingTypeId != null and shoppingTypeId >= 0">
+                and shoppingTypeId = #{shoppingTypeId}
+            </if>
+            <if test="begin != null and begin != '' and end != null and end != ''">
+                and createdate between #{begin} and #{end}
+            </if>
+        </where>
+        order by createdate DESC
+    </select>
+
+    <select id="queryOneShopping" resultType="com.pets.pojo.entity.PetShopping">
+        select id, name, description, price, stock, createDate, updateDate, shoppingTypeId, status, image
+        from pet_shopping
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+        </where>
+    </select>
+
+    <insert id="insertNewShopping" parameterType="com.pets.pojo.dto.PetShoppingCreateInfo">
+        INSERT INTO pet_shopping
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">
+                name,
+            </if>
+            <if test="description != null and description != ''">
+                description,
+            </if>
+            <if test="price != null and price != ''">
+                price,
+            </if>
+            <if test="stock != null and stock >= 0">
+                stock,
+            </if>
+            <if test="shoppingTypeId != null and shoppingTypeId >= 0">
+                shoppingTypeId,
+            </if>
+            <if test="image != null and image != ''">
+                image,
+            </if>
+        </trim>
+        <trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">
+                #{name},
+            </if>
+            <if test="description != null and description != ''">
+                #{description},
+            </if>
+            <if test="price != null and price != ''">
+                #{price},
+            </if>
+            <if test="stock != null and stock >= 0">
+                #{stock},
+            </if>
+            <if test="shoppingTypeId != null and shoppingTypeId >= 0">
+                #{shoppingTypeId},
+            </if>
+            <if test="image != null and image != ''">
+                #{image},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateShoppingStatus">
+        UPDATE pet_shopping
+        SET status = #{status}
+        WHERE id = #{id}
+    </update>
+
+    <update id="updateShopping" parameterType="com.pets.pojo.entity.PetShopping">
+        UPDATE pet_shopping
+        <set>
+            <if test="name != null">
+                name = #{name},
+            </if>
+            <if test="description != null">
+                description = #{description},
+            </if>
+            <if test="price != null and price >= 0">
+                price = #{price},
+            </if>
+            <if test="stock != null and stock >= 0">
+                stock = #{stock},
+            </if>
+            <if test="shoppingTypeId != null and shoppingTypeId >= 0">
+                shoppingTypeId = #{shoppingTypeId},
+            </if>
+            <if test="image != null">
+                image = #{image},
+            </if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteShoppingImage">
+        UPDATE pet_shopping
+        set image = ''
+        where id = #{id}
+    </delete>
+
+</mapper>
+

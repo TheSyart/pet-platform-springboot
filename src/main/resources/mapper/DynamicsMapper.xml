@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pets.mapper.DynamicsMapper">
+
+    <insert id="insertDynamics" parameterType="com.pets.pojo.dto.DynamicsCreateInfo">
+        INSERT INTO dynamics
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="content != null and content != ''">
+                content,
+            </if>
+            <if test="image_path != null and image_path != ''">
+                image_path,
+            </if>
+            <if test="parent_id != null and parent_id != ''">
+                parent_id,
+            </if>
+        </trim>
+        <trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+            <if test="content != null and content != ''">
+                #{content},
+            </if>
+            <if test="image_path != null and image_path != ''">
+                #{image_path},
+            </if>
+            <if test="parent_id != null and parent_id != ''">
+                #{parent_id},
+            </if>
+        </trim>
+    </insert>
+
+    <select id="queryDynamicsHistory" resultType="com.pets.pojo.entity.DynamicsLikePeople">
+        select id, username, dynamicsId, createdDate, updateDate, status
+        from dynamics_likepeople
+        <where>
+            <if test=" id != null">
+                dynamicsId = #{id}
+            </if>
+            <if test=" username != null">
+                and username = #{username}
+            </if>
+        </where>
+    </select>
+
+    <insert id="insertDynamicsLikePeople">
+        INSERT INTO dynamics_likepeople
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="username != null and username != ''">
+                username,
+            </if>
+            <if test="dynamicsId != null and dynamicsId != ''">
+                dynamicsId,
+            </if>
+        </trim>
+        <trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+            <if test="username != null and username != ''">
+                #{username},
+            </if>
+            <if test="dynamicsId != null and dynamicsId != ''">
+                #{dynamicsId},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateDynamicsLikePeople">
+        UPDATE dynamics_likepeople
+        SET status = #{status}
+        <where>
+            <if test="dynamicsId != null">
+                dynamicsId = #{dynamicsId}
+            </if>
+            <if test="username != null">
+                and username = #{username}
+            </if>
+        </where>
+    </update>
+
+    <select id="getDynamics" resultType="com.pets.pojo.vo.DynamicsVO">
+        SELECT
+            d.parent_id,
+            d.id,
+            c.name,
+            d.sendtime,
+            d.content,
+            c.image,
+            d.image_path,
+            (SELECT COUNT(*)
+             FROM dynamics_likepeople dlp
+             WHERE dlp.dynamicsId = d.id AND dlp.status = 0) AS likeCount,
+            CASE WHEN EXISTS (
+                SELECT 1
+                FROM dynamics_likepeople AS dlp_sub
+                WHERE dlp_sub.dynamicsId = d.id
+                  AND dlp_sub.username = #{username}
+                  AND dlp_sub.status = 0
+            ) THEN 1
+            ELSE 0
+            END AS isLike
+
+        FROM dynamics AS d
+                 LEFT JOIN pet_customer AS c ON d.parent_id = c.id
+        ORDER BY
+            d.sendtime DESC
+        LIMIT 10 OFFSET #{dynamicsNum};
+    </select>
+
+    <select id="queryAllDynamics" resultType="com.pets.pojo.vo.DynamicsVO">
+        select dy.id,
+        pc.name as name,
+        dy.image_path,
+        dy.sendtime,
+        (SELECT COUNT(*)
+        FROM dynamics_likepeople dlp
+        WHERE dlp.dynamicsId = dy.id AND dlp.status = 0) AS likeCount,
+        dy.parent_id,
+        dy.updateDate,
+        dy.status
+        from dynamics dy
+        left join pet_customer pc on dy.parent_id = pc.id
+        <where>
+            <if test="name != null and name != ''">
+                pc.name like concat('%',#{name},'%')
+            </if>
+            <if test="status >= 0 and status != null">
+                and dy.status = #{status}
+            </if>
+            <if test="begin != null and begin != '' and end != null and end != ''">
+                and dy.sendtime between #{begin} and #{end}
+            </if>
+        </where>
+        order by dy.sendtime desc
+    </select>
+
+    <select id="queryOneDynamics" resultType="com.pets.pojo.entity.Dynamics">
+        SELECT dy.id,
+               pc.name,
+               dy.image_path,
+               dy.sendtime,
+               dy.content,
+               (SELECT COUNT(*)
+               FROM dynamics_likepeople dlp
+               WHERE dlp.dynamicsId = dy.id AND dlp.status = 0) AS likeCount,
+               (SELECT GROUP_CONCAT(dlp.username)
+               FROM dynamics_likepeople dlp
+               WHERE dlp.dynamicsId = dy.id AND dlp.status = 0) AS likepeople,
+               dy.parent_id,
+               dy.updateDate,
+               dy.status
+        FROM dynamics dy
+            left join pet_customer pc on dy.parent_id = pc.id
+        <where>
+            <if test=" id != null and id >= 0">
+                dy.id = #{id}
+            </if>
+        </where>
+    </select>
+
+    <update id="updateDynamicsStatus">
+        UPDATE dynamics
+        SET status = #{status}
+        WHERE id = #{id}
+    </update>
+
+</mapper>

@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pets.mapper.MyPetMapper">
+
+    <select id="getAllMyPetInformation" resultType="com.pets.pojo.vo.MyPetAndroidVO">
+        select id, pet_name, pet_breed,
+               pet_sex, pet_weight, pet_birth,
+               pet_coat, image, pet_details,
+               parent_id
+        from mypet
+        where
+            parent_id = #{parent_id}
+          and
+            status = 0
+        order by createDate desc
+    </select>
+
+    <insert id="insertNewMyPet" parameterType="com.pets.pojo.dto.MyPetCreateDTO">
+        INSERT INTO mypet
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="parent_id != null and parent_id != ''">
+                parent_id,
+            </if>
+            <if test="pet_name != null and pet_name != ''">
+                pet_name,
+            </if>
+            <if test="pet_sex != null and pet_sex >= 0">
+                pet_sex,
+            </if>
+            <if test="pet_breed != null and pet_breed >= 0">
+                pet_breed,
+            </if>
+            <if test="pet_weight != null and pet_weight != ''">
+                pet_weight,
+            </if>
+            <if test="pet_birth != null and pet_birth != ''">
+                pet_birth,
+            </if>
+            <if test="pet_coat != null and pet_coat >= 0">
+                pet_coat,
+            </if>
+            <if test="image != null and image != ''">
+                image,
+            </if>
+            <if test="pet_details != null and pet_details >= 0">
+                pet_details,
+            </if>
+        </trim>
+        <trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+            <if test="parent_id != null and parent_id != ''">
+                #{parent_id},
+            </if>
+            <if test="pet_name != null and pet_name != ''">
+                #{pet_name},
+            </if>
+            <if test="pet_sex != null and pet_sex >= 0">
+                #{pet_sex},
+            </if>
+            <if test="pet_breed != null and pet_breed >= 0">
+                #{pet_breed},
+            </if>
+            <if test="pet_weight != null and pet_weight != ''">
+                #{pet_weight},
+            </if>
+            <if test="pet_birth != null and pet_birth != ''">
+                #{pet_birth},
+            </if>
+            <if test="pet_coat != null and pet_coat >= 0">
+                #{pet_coat},
+            </if>
+            <if test="image != null and image != ''">
+                #{image},
+            </if>
+            <if test="pet_details != null and pet_details >= 0">
+                #{pet_details},
+            </if>
+        </trim>
+    </insert>
+
+
+    <select id="queryAllPet" resultType="com.pets.pojo.vo.MyPetVO">
+        select c.name, p.id, p.pet_name, p.pet_breed, p.pet_sex,
+        p.pet_details, p.createDate, p.modifyDate, p.status
+        from mypet as p
+        left join pet_customer as c on c.id = p.parent_id
+        <where>
+            <if test="petName != null and petName != ''">
+                p.pet_name like concat('%',#{petName},'%')
+            </if>
+            <if test="petBreed != null and petBreed != '' and petBreed >= 0">
+                and p.pet_breed = #{petBreed}
+            </if>
+            <if test="gender != null and gender >= 0">
+                and p.pet_sex = #{gender}
+            </if>
+            <if test="userName != null and userName != ''">
+                and c.name like concat('%',#{userName},'%')
+            </if>
+            <if test="status != null and status >= 0">
+                and p.status = #{status}
+            </if>
+            <if test="begin != null and begin != '' and end != null and end != ''">
+                and p.createDate between #{begin} and #{end}
+            </if>
+        </where>
+        order by p.createDate desc
+    </select>
+
+
+    <select id="queryOnePet" resultType="com.pets.pojo.vo.MyPetVO">
+        select c.name, p.id, p.parent_id, p.pet_name, p.pet_breed,
+               p.pet_sex, p.pet_weight, p.pet_birth, p.pet_coat,
+               p.pet_details, p.image, p.status
+        from pet_platform.mypet as p
+        left join pet_platform.pet_customer as c on c.id = p.parent_id
+        <where>
+            <if test=" id != null and id != ''">
+                p.id = #{id}
+            </if>
+        </where>
+    </select>
+
+    <select id="queryPetCoat" resultType="java.lang.String">
+        SELECT coat_color
+        from pet_coat_details
+        order by coat_id
+    </select>
+
+    <select id="queryPetDetails" resultType="java.lang.String">
+        SELECT description
+        from pet_details_info
+        order by details_id
+    </select>
+
+    <select id="queryPetTimeslot" resultType="java.lang.String">
+        SELECT time_slot
+        from service_appointment_timeslot
+        order by time_slot
+    </select>
+
+</mapper>

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pets.mapper.FeedingSkillMapper">
+
+    <select id="queryFeedingSkill" resultType="com.pets.pojo.entity.FeedingSkill">
+        SELECT id, title, content, image, createDate
+        FROM encyclopedia_feedingskill
+        ORDER BY
+            createDate DESC
+        LIMIT 10 OFFSET #{skillNum};
+    </select>
+
+    <select id="pageQueryAllFeeding" resultType="com.pets.pojo.vo.FeedingSkillVO">
+        select id, title, createDate, updateDate, status
+        from encyclopedia_feedingskill
+        <where>
+            <if test="title != null and title != ''">
+                title like concat('%',#{title},'%')
+            </if>
+            <if test="status >= 0 and status != null">
+                and status = #{status}
+            </if>
+            <if test="begin != null and begin != '' and end != null and end != ''">
+                and createDate between #{begin} and #{end}
+            </if>
+        </where>
+        order by createDate desc
+    </select>
+
+    <select id="queryOneFeeding" resultType="com.pets.pojo.entity.FeedingSkill">
+        select id, title, content, image, status
+        from encyclopedia_feedingskill
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+        </where>
+    </select>
+
+    <insert id="insertOneFeeding" parameterType="com.pets.pojo.dto.FeedingSkillCreateInfo">
+        INSERT INTO encyclopedia_feedingskill
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="title != null and title != ''">
+                title,
+            </if>
+            <if test="content != null and content != ''">
+                content,
+            </if>
+            <if test="image != null and image != ''">
+                image,
+            </if>
+        </trim>
+        <trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+            <if test="title != null and title != ''">
+                #{title},
+            </if>
+            <if test="content != null and content != ''">
+                #{content},
+            </if>
+            <if test="image != null and image != ''">
+                #{image},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateFeedingStatus">
+        UPDATE encyclopedia_feedingskill
+        SET status = #{status}
+        WHERE id = #{id}
+    </update>
+
+    <update id="updateFeeding" parameterType="com.pets.pojo.entity.FeedingSkill">
+        UPDATE encyclopedia_feedingskill
+        <set>
+            <if test="title != null and title != ''">
+                title = #{title},
+            </if>
+            <if test="content != null and content != ''">
+                content = #{content},
+            </if>
+            <if test="image != null and image != ''">
+                image = #{image},
+            </if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteFeedingImage">
+        UPDATE encyclopedia_feedingskill
+        set image = ''
+        where id = #{id}
+    </delete>
+
+</mapper>

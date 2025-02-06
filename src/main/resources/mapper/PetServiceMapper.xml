@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pets.mapper.PetServiceMapper">
+
+    <select id="queryAllPetServiceType" resultType="com.pets.pojo.vo.ServiceTypeVO">
+        select typeId, name, description, image
+        from service_type
+        where status = 0
+    </select>
+
+    <select id="queryPetServiceById" resultType="com.pets.pojo.entity.PetService">
+        select id, name, description, price, createDate, updateDate, shoppingTypeId, status, image
+        from pet_service
+        <where>
+            status = 0
+            <if test=" id != null and id >= 0">
+                and shoppingTypeId = #{id}
+            </if>
+        </where>
+    </select>
+
+    <select id="queryTimeSlot" resultType="com.pets.pojo.vo.TimeSlotVO">
+        select id, timeslot_id, time_slot, start_time, end_time, status, capacity
+        from service_appointment_timeslot
+        where status = 0
+    </select>
+
+    <select id="queryTimeSlotPeople" resultType="java.lang.Integer">
+        <if test="timeSlotQueryPeopleDTOS != null and !timeSlotQueryPeopleDTOS.isEmpty()">
+            <foreach collection="timeSlotQueryPeopleDTOS" item="dto" separator="UNION ALL">
+                SELECT
+                count(id)
+                FROM
+                pet_order
+                WHERE
+                appointmentDoctor = #{doctorId}
+                AND timeslot_id = #{dto.time_id}
+                AND appointmentTime = #{dto.time}
+            </foreach>
+        </if>
+        <if test="timeSlotQueryPeopleDTOS == null or timeSlotQueryPeopleDTOS.isEmpty()">
+            SELECT 0
+        </if>
+    </select>
+
+    <select id="queryAllService" resultType="com.pets.pojo.vo.PetServiceV0">
+        select id, name, description, price, createDate, updateDate, shoppingTypeId, status
+        from pet_service
+        <where>
+            <if test="name != null and name != ''">
+                name like concat('%',#{name},'%')
+            </if>
+            <if test="status >= 0 and status != null">
+                and status = #{status}
+            </if>
+            <if test="shoppingTypeId != null and shoppingTypeId >= 0">
+                and shoppingTypeId = #{shoppingTypeId}
+            </if>
+            <if test="begin != null and begin != '' and end != null and end != ''">
+                and createdate between #{begin} and #{end}
+            </if>
+        </where>
+        order by createdate DESC
+    </select>
+
+    <select id="allServiceType" resultType="java.lang.String">
+        select name
+        from service_type
+        where status = 0
+        order by typeId
+    </select>
+
+    <select id="allServiceTypeId" resultType="java.lang.Integer">
+        select typeId
+        from service_type
+        where status = 0
+        order by typeId
+    </select>
+
+    <select id="queryOneService" resultType="com.pets.pojo.entity.PetService">
+        select id, name, description, price, createDate, updateDate, shoppingTypeId, status, image
+        from pet_service
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+        </where>
+    </select>
+
+    <insert id="insertNewService" parameterType="com.pets.pojo.dto.PetServiceCreateInfo">
+        INSERT INTO pet_service
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">
+                name,
+            </if>
+            <if test="description != null and description != ''">
+                description,
+            </if>
+            <if test="price != null and price != ''">
+                price,
+            </if>
+            <if test="shoppingTypeId != null and shoppingTypeId >= 0">
+                shoppingTypeId,
+            </if>
+            <if test="image != null and image != ''">
+                image,
+            </if>
+        </trim>
+        <trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">
+                #{name},
+            </if>
+            <if test="description != null and description != ''">
+                #{description},
+            </if>
+            <if test="price != null and price != ''">
+                #{price},
+            </if>
+            <if test="shoppingTypeId != null and shoppingTypeId >= 0">
+                #{shoppingTypeId},
+            </if>
+            <if test="image != null and image != ''">
+                #{image},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateServiceStatus">
+        UPDATE pet_service
+        SET status = #{status}
+        WHERE id = #{id}
+    </update>
+
+    <update id="updateService" parameterType="com.pets.pojo.entity.PetService">
+        UPDATE pet_shopping
+        <set>
+            <if test="name != null">
+                name = #{name},
+            </if>
+            <if test="description != null">
+                description = #{description},
+            </if>
+            <if test="price != null and price >= 0">
+                price = #{price},
+            </if>
+            <if test="shoppingTypeId != null and shoppingTypeId >= 0">
+                shoppingTypeId = #{shoppingTypeId},
+            </if>
+            <if test="image != null">
+                image = #{image},
+            </if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteServiceImage">
+        UPDATE pet_service
+        set image = ''
+        where id = #{id}
+    </delete>
+
+</mapper>

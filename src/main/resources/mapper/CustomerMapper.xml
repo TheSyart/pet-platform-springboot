@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pets.mapper.CustomerMapper">
+
+    <select id="checkPhoneUnique" resultType="java.lang.Integer">
+        SELECT COUNT(1)
+        FROM pet_customer
+        WHERE phone = #{phone}
+    </select>
+
+    <insert id="registerNewAccount" parameterType="com.pets.pojo.entity.Customer">
+        INSERT INTO pet_customer
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="username != null and username != ''">
+                username,
+            </if>
+            <if test="name != null and name != ''">
+                name,
+            </if>
+            <if test="birth != null and birth != ''">
+                birth,
+            </if>
+            <if test="status != null and status >= 0">
+                status,
+            </if>
+            <if test="phone != null and phone != ''">
+                phone,
+            </if>
+            <if test="gender != null and gender >= 0">
+                gender,
+            </if>
+            <if test="image != null and image != ''">
+                image,
+            </if>
+        </trim>
+        <trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+            <if test="username != null and username != ''">
+                #{username},
+            </if>
+            <if test="name != null and name != ''">
+                #{name},
+            </if>
+            <if test="birth != null and birth != ''">
+                #{birth},
+            </if>
+            <if test="status != null and status >= 0">
+                #{status},
+            </if>
+            <if test="phone != null and phone != ''">
+                #{phone},
+            </if>
+            <if test="gender != null and gender >= 0">
+                #{gender},
+            </if>
+            <if test="image != null and image != ''">
+                #{image},
+            </if>
+        </trim>
+    </insert>
+
+    <select id="getCustomerInformation" resultType="com.pets.pojo.entity.Customer">
+        select id, username, password, name, gender, birth, image, createdate, phone
+        from pet_customer
+        <where>
+            <if test="(id != null and id != '') or (username != null and username != '')">
+                <trim prefixOverrides="OR">
+                    <if test="id != null and id != ''">
+                        OR id = #{id}
+                    </if>
+                    <if test="username != null and username != ''">
+                        OR username = #{username}
+                    </if>
+                </trim>
+            </if>
+        </where>
+    </select>
+
+    <select id="queryAllCustomer" resultType="com.pets.pojo.vo.CustomerVO">
+        select id, name, gender, createdate, phone, birth, status, modifydate
+        from pet_customer
+        <where>
+            <if test="name != null and name != ''">
+                name like concat('%',#{name},'%')
+            </if>
+            <if test="status >= 0 and status != null">
+                and status = #{status}
+            </if>
+            <if test="gender != null and gender >= 0">
+                and gender = #{gender}
+            </if>
+            <if test="begin != null and begin != '' and end != null and end != ''">
+                and createdate between #{begin} and #{end}
+            </if>
+        </where>
+        order by createdate desc
+    </select>
+
+    <select id="queryOneCustomer" resultType="com.pets.pojo.entity.Customer">
+        select id, username, password, birth, name, gender,
+        phone, image, createdate, modifydate, status
+        from pet_customer
+        <where>
+            <if test="id != null and id >= 0">
+                and id = #{id}
+            </if>
+        </where>
+    </select>
+
+    <update id="updateCustomerStatus">
+        UPDATE pet_customer
+        SET status = #{status}
+        WHERE id = #{id}
+    </update>
+
+    <update id="updateCustomer" parameterType="com.pets.pojo.entity.Customer">
+        UPDATE pet_customer
+        <set>
+            <trim suffixOverrides=",">
+                <if test="name!= null">
+                    name = #{name},
+                </if>
+                <if test="phone!= null">
+                    phone = #{phone},
+                </if>
+                <if test="gender!= null and gender >= 0">
+                    gender = #{gender},
+                </if>
+                <if test="birth!= null">
+                    birth = #{birth},
+                </if>
+                <if test="image!= null">
+                    image = #{image},
+                </if>
+                <if test="password!= null">
+                    password = #{password},
+                </if>
+            </trim>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <update id="deleteCustomerImage">
+        UPDATE pet_customer
+        set image = ''
+        where id = #{id}
+    </update>
+
+    <update id="unbindPhone">
+        update pet_customer
+        <set>
+            <if test="phone!= null">
+                phone = ''
+            </if>
+        </set>
+        WHERE phone = #{phone}
+    </update>
+
+</mapper>

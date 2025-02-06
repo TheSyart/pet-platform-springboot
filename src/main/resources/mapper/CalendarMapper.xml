@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pets.mapper.CalendarMapper">
+
+    <select id="getEventByParentId" resultType="com.pets.pojo.vo.CalendarVO">
+        select id, parent_id, createDate, event
+        from pet_calendar
+        <where>
+            <if test="parent_id != null and parent_id !='' ">
+                parent_id = #{parent_id}
+            </if>
+        </where>
+    </select>
+
+    <insert id="insertNewEvent" parameterType="com.pets.pojo.dto.CalendarDTO">
+        INSERT INTO pet_calendar
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null and id != ''">
+                id,
+            </if>
+            <if test="parent_id != null and parent_id != ''">
+                parent_id,
+            </if>
+            <if test="event != null and event != ''">
+                event,
+            </if>
+            <if test="createDate != null and createDate != ''">
+                createDate,
+            </if>
+        </trim>
+        <trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+            <if test="id != null and id != ''">
+                #{id},
+            </if>
+            <if test="parent_id != null and parent_id != ''">
+                #{parent_id},
+            </if>
+            <if test="event != null and event != ''">
+                #{event},
+            </if>
+            <if test="createDate != null and createDate != ''">
+                #{createDate},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateEvent">
+        UPDATE pet_calendar
+        SET event = #{event}
+        <where>
+            <if test="id != null and id != ''">
+                AND id = #{id}
+            </if>
+        </where>
+    </update>
+
+    <delete id="deleteEvent">
+        DELETE FROM pet_calendar
+        <where>
+            <if test="id != null and id !=''">
+                id = #{id}
+            </if>
+            <if test="id == null or id == ''">
+                1 = 0
+            </if>
+        </where>
+    </delete>
+
+    <select id="getCalendarIdByCreateDateAndId" resultType="java.lang.String">
+        select id
+        from pet_calendar
+        where createDate = #{createDate}
+        and parent_id = #{parent_id}
+    </select>
+
+</mapper>

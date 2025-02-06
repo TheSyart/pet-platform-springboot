@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pets.mapper.EncyclopediaMapper">
+
+    <select id="queryAllPetBreed" resultType="java.lang.String">
+        select petSpeciesName
+        from encyclopedia_petspecies
+        order by id
+    </select>
+
+    <select id="getSpeciesSignAndName" resultType="com.pets.pojo.entity.PetEncyclopedia">
+        select speciesId as id, petSpeciesName as name, image
+        from encyclopedia_petspecies
+    </select>
+
+    <select id="oneSpeciesDetails" resultType="com.pets.pojo.entity.PetEncyclopedia">
+        select id, petName as name, image
+        from encyclopedia_petspecies_details
+        <where>
+            status = 0
+            <if test="id != null">
+                and parentId = #{id}
+            </if>
+        </where>
+    </select>
+
+    <select id="onePetDetails" resultType="com.pets.pojo.entity.PetEncyclopediaDetails">
+        select id, parentId, petName, image, content, petHeight, petWeight, petLife, petOrigin, petShape, anotherName, petPrice
+        from encyclopedia_petspecies_details
+        <where>
+            status = 0
+            <if test="id != null">
+                and id = #{id}
+            </if>
+        </where>
+    </select>
+
+    <select id="queryOneEncyclopedia" resultType="com.pets.pojo.entity.PetEncyclopediaDetails">
+        select id, parentId, petName, image, content, petHeight, petWeight, petLife, petOrigin, petShape, anotherName, petPrice
+        from encyclopedia_petspecies_details
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+        </where>
+    </select>
+
+    <select id="queryAllEncyclopedia" resultType="com.pets.pojo.vo.EncyclopediaVO">
+        select id, parentId, petName, petOrigin, petLife, anotherName, petPrice, status, createDate, updateDate
+        from encyclopedia_petspecies_details
+        <where>
+            <if test="petName != null and petName != ''">
+                (petName like concat('%',#{petName},'%') or anotherName like concat('%',#{petName},'%'))
+            </if>
+            <if test="petSpecies != null and petSpecies >= 0">
+                and parentId = #{petSpecies}
+            </if>
+            <if test="status >= 0 and status != null">
+                and status = #{status}
+            </if>
+            <if test="begin != null and begin != '' and end != null and end != ''">
+                and createDate between #{begin} and #{end}
+            </if>
+        </where>
+        order by createDate desc
+    </select>
+
+    <insert id="insertOneEncyclopedia" parameterType="com.pets.pojo.dto.EncyclopediaCreateInfo">
+        INSERT INTO encyclopedia_petspecies_details
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="parentId != null and parentId >= 0">
+                parentId,
+            </if>
+            <if test="petName != null and petName != ''">
+                petName,
+            </if>
+            <if test="image != null and image != ''">
+                image,
+            </if>
+            <if test="content != null and content != ''">
+                content,
+            </if>
+            <if test="petWeight != null and petWeight != ''">
+                petWeight,
+            </if>
+            <if test="petHeight != null and petHeight != ''">
+                petHeight,
+            </if>
+            <if test="petLife != null and petLife != ''">
+                petLife,
+            </if>
+            <if test="petOrigin != null and petOrigin != ''">
+                petOrigin,
+            </if>
+            <if test="petShape != null and petShape != ''">
+                petShape,
+            </if>
+            <if test="anotherName != null and anotherName != ''">
+                anotherName,
+            </if>
+            <if test="petPrice != null and petPrice != ''">
+                petPrice,
+            </if>
+        </trim>
+        <trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+            <if test="parentId != null">
+                #{parentId},
+            </if>
+            <if test="petName != null and petName != ''">
+                #{petName},
+            </if>
+            <if test="image != null and image != ''">
+                #{image},
+            </if>
+            <if test="content != null and content != ''">
+                #{content},
+            </if>
+            <if test="petWeight != null and petWeight != ''">
+                #{petWeight},
+            </if>
+            <if test="petHeight != null and petHeight != ''">
+                #{petHeight},
+            </if>
+            <if test="petLife != null and petLife != ''">
+                #{petLife},
+            </if>
+            <if test="petOrigin != null and petOrigin != ''">
+                #{petOrigin},
+            </if>
+            <if test="petShape != null and petShape != ''">
+                #{petShape},
+            </if>
+            <if test="anotherName != null and anotherName != ''">
+                #{anotherName},
+            </if>
+            <if test="petPrice != null and petPrice != ''">
+                #{petPrice},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateEncyclopediaStatus">
+        UPDATE encyclopedia_petspecies_details
+        SET status = #{status}
+        WHERE id = #{id}
+    </update>
+
+    <update id="updateEncyclopedia" parameterType="com.pets.pojo.entity.PetEncyclopediaDetails">
+        UPDATE encyclopedia_petspecies_details
+        <set>
+            <if test="parentId != null">
+                parentId = #{parentId},
+            </if>
+            <if test="petName != null">
+                petName = #{petName},
+            </if>
+            <if test="petWeight != null">
+                petWeight = #{petWeight},
+            </if>
+            <if test="petHeight != null">
+                petHeight = #{petHeight},
+            </if>
+            <if test="content != null">
+                content = #{content},
+            </if>
+            <if test="image != null">
+                image = #{image},
+            </if>
+            <if test="petLife != null">
+                petLife = #{petLife},
+            </if>
+            <if test="petOrigin != null">
+                petOrigin = #{petOrigin},
+            </if>
+            <if test="petShape != null">
+                petShape = #{petShape},
+            </if>
+            <if test="anotherName != null">
+                anotherName = #{anotherName},
+            </if>
+            <if test="petPrice != null">
+                petPrice = #{petPrice},
+            </if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteEncyclopediaImage">
+        UPDATE encyclopedia_petspecies_details
+        set image = ''
+        where id = #{id}
+    </delete>
+
+</mapper>

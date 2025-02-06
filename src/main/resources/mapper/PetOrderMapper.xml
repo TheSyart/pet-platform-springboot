@@ -1,0 +1,545 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pets.mapper.PetOrderMapper">
+
+    <insert id="insertOrder" parameterType="com.pets.pojo.dto.PetOrderDTO">
+        INSERT INTO pet_order
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="order_id != null and order_id != ''">
+                order_id,
+            </if>
+            <if test="secretKey != null and secretKey != ''">
+                secretKey,
+            </if>
+            <if test="customer_id != null and customer_id != ''">
+                customer_id,
+            </if>
+            <if test="totalAmount != null and totalAmount >= 0">
+                total_amount,
+            </if>
+            <if test="paymentMethod != null and paymentMethod >= 0">
+                payment_method,
+            </if>
+            <if test="addressId != null and addressId != ''">
+                address_id,
+            </if>
+            <if test="note != null and note != ''">
+                note,
+            </if>
+            <if test="pickMethod != null and pickMethod >= 0">
+                pick_method,
+            </if>
+            <if test="reservedName != null and reservedName != ''">
+                reservedName,
+            </if>
+            <if test="reservedPhone != null and reservedPhone != ''">
+                reservedPhone,
+            </if>
+            <if test="order_type != null and order_type >= 0">
+                order_type,
+            </if>
+            <if test="appointmentPet != null and appointmentPet >= 0">
+                appointmentPet,
+            </if>
+            <if test="appointmentTime != null">
+                appointmentTime,
+            </if>
+            <if test="appointmentDoctor != null and appointmentDoctor >= 0">
+                appointmentDoctor,
+            </if>
+            <if test="timeslot_id != null and timeslot_id >= 0">
+                timeslot_id,
+            </if>
+        </trim>
+        <trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+            <if test="order_id != null and order_id != ''">
+                #{order_id},
+            </if>
+            <if test="secretKey != null and secretKey != ''">
+                #{secretKey},
+            </if>
+            <if test="customer_id != null and customer_id != ''">
+                #{customer_id},
+            </if>
+            <if test="totalAmount != null and totalAmount >= 0">
+                #{totalAmount},
+            </if>
+            <if test="paymentMethod != null and paymentMethod >= 0">
+                #{paymentMethod},
+            </if>
+            <if test="addressId != null and addressId != ''">
+                #{addressId},
+            </if>
+            <if test="note != null and note != ''">
+                #{note},
+            </if>
+            <if test="pickMethod != null and pickMethod >= 0">
+                #{pickMethod},
+            </if>
+            <if test="reservedName != null and reservedName != ''">
+                #{reservedName},
+            </if>
+            <if test="reservedPhone != null and reservedPhone != ''">
+                #{reservedPhone},
+            </if>
+            <if test="order_type != null and order_type >= 0">
+                #{order_type},
+            </if>
+            <if test="appointmentPet != null and appointmentPet >= 0">
+                #{appointmentPet},
+            </if>
+            <if test="appointmentTime != null">
+                #{appointmentTime},
+            </if>
+            <if test="appointmentDoctor != null and appointmentDoctor >= 0">
+                #{appointmentDoctor},
+            </if>
+            <if test="timeslot_id != null and timeslot_id >= 0">
+                #{timeslot_id},
+            </if>
+        </trim>
+    </insert>
+
+    <insert id="insertOrderInfo" parameterType="java.util.List">
+        INSERT INTO pet_platform.orderinfo (shopping_id, order_id, name, price, quantity)
+        VALUES
+        <foreach collection="orderInfoList" item="item" separator=",">
+            (#{item.shopping_id},#{item.order_id}, #{item.name}, #{item.price}, #{item.quantity})
+        </foreach>
+    </insert>
+
+    <resultMap id="OrderResultMap" type="com.pets.pojo.vo.OrderVO">
+        <!-- 直接映射字段 -->
+        <result property="id" column="id"/>
+        <result property="order_id" column="order_id"/>
+        <result property="customer_id" column="customer_id"/>
+        <result property="customerName" column="customerName"/>
+        <result property="pickMethod" column="paymentMethod"/>
+        <result property="totalAmount" column="totalAmount"/>
+        <result property="paymentMethod" column="paymentMethod"/>
+        <result property="note" column="note"/>
+        <result property="orderstatus" column="orderstatus"/>
+        <result property="createdate" column="createdate"/>
+        <result property="reservedName" column="reservedName"/>
+        <result property="reservedPhone" column="reservedPhone"/>
+        <result property="secretKey" column="secretKey"/>
+        <result property="serviceTimeSlot" column="serviceTimeSlot"/>
+        <result property="doctorName" column="doctorName"/>
+        <result property="doctorPhone" column="doctorPhone"/>
+        <result property="petName" column="petName"/>
+        <result property="appointmentTime" column="appointmentTime"/>
+        <result property="order_type" column="order_type"/>
+        <!-- 嵌套映射 Address -->
+        <association property="address" javaType="com.pets.pojo.entity.Address">
+            <id property="id" column="id"/>
+            <result property="name" column="name"/>
+            <result property="phone" column="phone"/>
+            <result property="gender" column="gender"/>
+            <result property="addressTitle" column="addressTitle"/>
+            <result property="addressDetails" column="addressDetails"/>
+            <result property="longitude" column="longitude"/>
+            <result property="latitude" column="latitude"/>
+            <result property="door" column="door"/>
+        </association>
+    </resultMap>
+
+    <select id="queryAllOrderByCustomerId" resultMap="OrderResultMap">
+        SELECT
+        po.order_id,
+        po.customer_id,
+        po.pick_method,
+        po.total_amount as totalAmount,
+        po.payment_method as pickMethod,
+        po.pick_method as paymentMethod,
+        po.note,
+        po.orderstatus,
+        po.createdate,
+        po.reservedName,
+        po.reservedPhone,
+        po.secretKey,
+        po.appointmentTime,
+        -- 地址字段
+        pa.id,
+        pa.name,
+        pa.phone,
+        pa.gender,
+        pa.addressTitle,
+        pa.addressDetails,
+        pa.longitude,
+        pa.latitude,
+        pa.door,
+        -- 医师字段
+        pe.name as doctorName,
+        pe.phone as doctorPhone,
+        -- 宠物字段
+        mp.pet_name as petName,
+        -- 服务时段字段
+        sat.time_slot as serviceTimeSlot
+        FROM
+        pet_order po
+        LEFT JOIN
+        address pa ON pa.id = po.address_id
+        LEFT JOIN
+        pet_emp pe ON pe.id = po.appointmentDoctor
+        LEFT JOIN
+        mypet mp ON mp.id = po.appointmentPet
+        LEFT JOIN
+        service_appointment_timeslot sat ON sat.timeslot_id = po.timeslot_id
+        <where>
+            po.customer_id = #{customerId}
+            and
+            po.status = 0
+            <if test="order_type != null and order_type >= 0">
+                and po.order_type = #{order_type}
+            </if>
+            <if test="orderStatusList != null and orderStatusList.size() > 0">
+                and po.orderStatus IN
+                <foreach collection="orderStatusList" item="orderStatus" open="(" separator="," close=")">
+                    #{orderStatus}
+                </foreach>
+            </if>
+        </where>
+        ORDER BY po.createdate DESC
+        LIMIT 5 OFFSET #{num}
+    </select>
+
+
+    <select id="queryShoppingOrderInfo" resultType="com.pets.pojo.entity.OrderInfo">
+        SELECT po.shopping_id, po.order_id, po.price, po.quantity, po.subtotal, po.name, pp.image
+        FROM orderinfo po
+        LEFT JOIN pet_shopping pp ON pp.id = po.shopping_id
+        WHERE
+        <if test="list != null and list.size() > 0">
+            order_id IN
+            <foreach collection="list" item="orderId" open="(" separator="," close=")">
+                #{orderId}
+            </foreach>
+        </if>
+        <if test="list == null or list.size() == 0">
+            1 = 0  <!-- 这个条件确保查询不会返回任何结果 -->
+        </if>
+    </select>
+
+    <select id="queryServiceOrderInfo" resultType="com.pets.pojo.entity.OrderInfo">
+        SELECT po.shopping_id, po.order_id, po.price, po.quantity, po.subtotal, po.name, ps.image
+        FROM orderinfo po
+        LEFT JOIN pet_service ps ON po.shopping_id = ps.id
+        WHERE
+        <if test="list != null and list.size() > 0">
+            order_id IN
+            <foreach collection="list" item="orderId" open="(" separator="," close=")">
+                #{orderId}
+            </foreach>
+        </if>
+        <if test="list == null or list.size() == 0">
+            1 = 0  <!-- 这个条件确保查询不会返回任何结果 -->
+        </if>
+    </select>
+
+    <select id="queryAllOrderTypeAndFront" resultType="com.pets.pojo.entity.OrderType">
+        SELECT order_type, orderFront
+        FROM order_type
+        where status = 0
+    </select>
+
+    <select id="queryAllOrderType" resultType="java.lang.String">
+        SELECT description
+        FROM order_type
+        order by order_type
+    </select>
+
+    <select id="queryAllOrderTypeId" resultType="java.lang.Integer">
+        SELECT order_type
+        FROM order_type
+        order by order_type
+    </select>
+
+    <select id="queryAllOrder" resultType="com.pets.pojo.vo.PetOrderVO">
+        SELECT
+        po.id,
+        po.order_id,
+        po.pick_method as pickMethod,
+        po.total_amount as totalAmount,
+        po.note,
+        po.orderstatus as orderStatus,
+        po.order_type,
+        po.createdate,
+        po.updatedate,
+        po.status,
+        pc.name as customerName
+        FROM
+        pet_order po
+        LEFT JOIN
+        pet_customer pc ON pc.id = po.customer_id
+        <where>
+            <if test="status != null and status >= 0">
+                po.status = #{status}
+            </if>
+            <if test="order_type != null and order_type >= 0">
+                and po.order_type = #{order_type}
+            </if>
+            <if test="orderStatus != null and orderStatus >= 0">
+                and po.orderStatus = #{orderStatus}
+            </if>
+            <if test="pickMethod != null and pickMethod >= 0">
+                and po.pick_method = #{pickMethod}
+            </if>
+            <if test="order_id != null and order_id != ''">
+                and po.order_id = #{order_id}
+            </if>
+            <if test="name != null and name != ''">
+                and pc.name like concat('%',#{name},'%')
+            </if>
+            <if test="begin != null and begin != '' and end != null and end != ''">
+                and po.createdate between #{begin} and #{end}
+            </if>
+        </where>
+        ORDER BY po.createdate DESC
+    </select>
+
+    <select id="queryOneOrder" resultMap="OrderResultMap">
+        SELECT po.id,
+               po.order_id,
+               po.customer_id,
+               po.pick_method,
+               po.total_amount   as totalAmount,
+               po.payment_method as pickMethod,
+               po.pick_method    as paymentMethod,
+               po.note,
+               po.orderstatus,
+               po.createdate,
+               po.reservedName,
+               po.reservedPhone,
+               po.secretKey,
+               po.appointmentTime,
+               po.order_type,
+               -- 地址字段
+               pa.id,
+               pa.name,
+               pa.phone,
+               pa.gender,
+               pa.addressTitle,
+               pa.addressDetails,
+               pa.longitude,
+               pa.latitude,
+               pa.door,
+               -- 医师字段
+               pe.name           as doctorName,
+               pe.phone          as doctorPhone,
+               -- 宠物字段
+               mp.pet_name       as petName,
+               -- 服务时段字段
+               sat.time_slot     as serviceTimeSlot,
+               -- 顾客姓名字段
+               pc.name           as customerName
+        FROM pet_order po
+                 LEFT  JOIN
+             address pa ON po.pick_method = 0 and pa.id = po.address_id
+                 LEFT  JOIN
+             pet_emp pe ON po.pick_method = 2 and pe.id = po.appointmentDoctor
+                 LEFT  JOIN
+             mypet mp ON po.pick_method = 2 and mp.id = po.appointmentPet
+                 LEFT  JOIN
+             service_appointment_timeslot sat ON po.pick_method = 2 and sat.timeslot_id = po.timeslot_id
+                 LEFT JOIN
+             pet_customer pc ON pc.id = po.customer_id
+        where po.id = #{id}
+        ORDER BY po.createdate DESC
+    </select>
+
+    <select id="queryOneOrderRecord" resultType="com.pets.pojo.vo.OrderRecordVO">
+        select
+            ore.operatorType,
+            CASE
+                WHEN ore.operatorType = 0 THEN pc.name
+                WHEN ore.operatorType = 1 THEN pe.name
+                END AS operatorName,
+            ore.operationContent,
+            ore.operatorTime
+        from order_record ore
+                 left join pet_order po on po.order_id = ore.orderId
+                 left join pet_customer pc on pc.id = ore.operatorId and ore.operatorType = 0
+                 left join pet_emp pe on pe.id = ore.operatorId and ore.operatorType = 1
+        where po.id = #{id}
+        order by ore.operatorTime
+    </select>
+
+
+    <select id="queryOrderTypeByOrderId" resultType="java.lang.Integer">
+        select order_type
+        from pet_order
+        where order_id = #{orderId}
+    </select>
+
+    <select id="queryOrderStatusByOrderId" resultType="java.lang.Integer">
+        select orderStatus
+        from pet_order
+        where order_id = #{orderId}
+    </select>
+
+    <update id="updateOrderStatus">
+        update pet_order
+        <set>
+            <if test="status != null and status >= 0">
+                status = #{status},
+            </if>
+            <if test="orderStatus != null and orderStatus >= 0">
+                orderStatus = #{orderStatus},
+            </if>
+        </set>
+        <where>
+            <if test="order_id != null and order_id != ''">
+                order_id = #{order_id}
+            </if>
+
+        </where>
+    </update>
+
+    <update id="finishOneOrder">
+
+    </update>
+
+    <!--    '订单状态:-->
+    <!--    0.订单待确认 1.商品待配送 2.商品自取中-->
+    <!--    3.服务待服务 4.商品配送中 5.商品已到货-->
+    <!--    6.订单取消中 7.服务已超时 8.申请退货中-->
+    <!--    9.订单已退款 10.订单已完成';-->
+    <select id="homeOrderCount" resultType="com.pets.pojo.vo.HomeOrderVO">
+        SELECT
+        CASE
+        WHEN t.order_type = 0 THEN '商品订单'
+        WHEN t.order_type = 1 THEN '服务订单'
+        ELSE '未知'
+        END AS orderCategory,
+        COALESCE(COUNT(po.id), 0) AS totalOrder,
+        COALESCE(SUM(CASE WHEN po.orderStatus = 10 THEN po.total_amount ELSE 0 END), 0) AS totalPrice,
+        COALESCE(SUM(CASE WHEN po.orderStatus in (0,1,2,3,4,5) THEN 1 ELSE 0 END), 0) AS finishing,
+        COALESCE(SUM(CASE WHEN po.orderStatus in (6,8) THEN 1 ELSE 0 END), 0) AS removing,
+        COALESCE(SUM(CASE WHEN po.orderStatus = 9 THEN 1 ELSE 0 END), 0) AS remove,
+        COALESCE(SUM(CASE WHEN po.orderStatus = 10 THEN 1 ELSE 0 END), 0) AS finish,
+        COALESCE(SUM(CASE WHEN po.orderStatus = 7 THEN 1 ELSE 0 END), 0) AS timeout
+        FROM (SELECT 0 AS order_type UNION ALL SELECT 1) t
+        LEFT JOIN pet_order po
+        ON t.order_type = po.order_type
+        <if test="start != null and end != null">
+            AND po.createdate BETWEEN #{start} AND #{end}
+        </if>
+        GROUP BY t.order_type;
+    </select>
+
+    <select id="queryAllOrderInfoDetailsCount" resultType="com.pets.pojo.vo.CommonOrderVO">
+        SELECT
+        t.category as category,
+        COALESCE(SUM(CASE WHEN po.orderStatus = 10 AND po.order_type = #{type} THEN oi.subtotal ELSE 0 END), 0) AS
+        saleTotal,
+        COALESCE(SUM(CASE WHEN po.orderStatus = 10 AND po.order_type = #{type} THEN oi.quantity ELSE 0 END), 0) AS
+        saleVolumes
+        FROM (
+        <foreach collection="categoryIds" item="id" separator=" UNION ALL ">
+            SELECT #{id} AS category
+        </foreach>
+        ) t
+        LEFT JOIN (
+        <choose>
+            <when test="type == 0">
+                SELECT ps.shoppingTypeId AS shoppingTypeId, ps.id AS shoppingId
+                FROM pet_shopping ps
+            </when>
+            <when test="type == 1">
+                SELECT psr.shoppingTypeId AS shoppingTypeId, psr.id AS shoppingId
+                FROM pet_service psr
+            </when>
+        </choose>
+        ) temp ON temp.shoppingTypeId = t.category
+        LEFT JOIN orderinfo oi ON temp.shoppingId = oi.shopping_id
+        LEFT JOIN pet_order po ON po.order_id = oi.order_id
+        <if test="start != null and end != null">
+            AND po.createdate BETWEEN #{start} AND #{end}
+        </if>
+        GROUP BY t.category
+        ORDER BY t.category;
+    </select>
+
+    <select id="queryAllShoppingSale" resultType="com.pets.pojo.vo.CommonOrderVO">
+        select
+        temp.name as shoppingName,
+        SUM(oi.subtotal) AS saleTotal,
+        SUM(oi.quantity) AS saleVolumes
+        from orderinfo oi
+        LEFT JOIN (
+        <choose>
+            <when test="type == 0">
+                SELECT ps.id AS shoppingId, ps.name AS name
+                FROM pet_shopping ps
+            </when>
+            <when test="type == 1">
+                SELECT psr.id AS shoppingId, psr.name AS name
+                FROM pet_service psr
+            </when>
+        </choose>
+        ) temp ON temp.shoppingId = oi.shopping_id
+        left join pet_order po on oi.order_id = po.order_id
+        <where>
+            po.orderStatus = 10
+            AND po.order_type = #{type}
+            <if test="start != null and end != null">
+                AND po.createdate BETWEEN #{start} AND #{end}
+            </if>
+        </where>
+        group by temp.name
+        order by saleVolumes desc
+    </select>
+
+    <select id="queryTimeoutOrder" resultType="java.lang.String">
+        select order_id
+        from pet_order po
+        LEFT JOIN service_appointment_timeslot sat
+        ON sat.timeslot_id = po.timeslot_id
+        WHERE po.orderStatus = 3    <!-- 判断条件 1.订单状态为3:服务待服务  2:订单类型为1:服务订单 3.预约时间超时-->
+        AND po.order_type = 1
+        AND NOW() > ADDDATE(po.appointmentTime, INTERVAL sat.end_time HOUR_SECOND)
+    </select>
+
+    <update id="updateExpiredOrders">
+        UPDATE pet_order
+        SET orderStatus = 7
+        WHERE order_id IN
+        <foreach collection="orderIdList" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </update>
+
+
+<!--    <update id="updateExpiredOrders">-->
+<!--        UPDATE pet_order po-->
+<!--        LEFT JOIN service_appointment_timeslot sat-->
+<!--        ON sat.timeslot_id = po.timeslot_id-->
+<!--        SET po.orderStatus = 7-->
+<!--        WHERE po.orderStatus = 3    &lt;!&ndash; 执行条件 1.订单状态为3:服务待服务  2:订单类型为1:服务订单 3.预约时间超时&ndash;&gt;-->
+<!--        AND po.order_type = 1-->
+<!--        AND NOW() > ADDDATE(po.appointmentTime, INTERVAL sat.end_time HOUR_SECOND)-->
+<!--    </update>-->
+
+    <insert id="insertOrderRecord" parameterType="java.util.List">
+        INSERT INTO order_record (orderId, operatorType, operatorId, operationContent)
+        VALUES
+        <foreach collection="orderRecords" item="record" separator=",">
+            (
+            <if test="record.orderId != null and record.orderId != ''">
+                #{record.orderId},
+            </if>
+            <if test="record.operatorType != null and record.operatorType >= 0">
+                #{record.operatorType},
+            </if>
+            <if test="record.operatorId != null and record.operatorId != ''">
+                #{record.operatorId},
+            </if>
+            <if test="record.operationContent != null and record.operationContent >= 0">
+                #{record.operationContent}
+            </if>
+            )
+        </foreach>
+    </insert>
+
+
+</mapper>

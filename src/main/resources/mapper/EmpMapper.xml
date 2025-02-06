@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pets.mapper.EmpMapper">
+
+    <select id="queryOneEmp" resultType="com.pets.pojo.entity.Emp">
+        select id, username, password, name, phone, gender, birth, status, job, entrydate, modifydate, image
+        from pet_emp
+        <where>
+            <if test="id != null and id != ''">
+                id =#{id}
+            </if>
+        </where>
+    </select>
+
+    <select id="pageQueryAllEmp" resultType="com.pets.pojo.vo.EmpVO">
+        select id, name, gender, job, entrydate, phone, birth, modifydate, status
+        from pet_emp
+        <where>
+            <if test="name != null and name != ''">
+                name like concat('%',#{name},'%')
+            </if>
+            <if test="gender != null and gender >= 0">
+                and gender = #{gender}
+            </if>
+            <if test="job != null and job >= 0">
+                and job = #{job}
+            </if>
+            <if test="status >= 0 and status != null">
+                and status = #{status}
+            </if>
+            <if test="begin != null and begin != '' and end != null and end != ''">
+                and entrydate between #{begin} and #{end}
+            </if>
+        </where>
+        order by entrydate desc
+    </select>
+
+    <insert id="insertNewEmp" parameterType="com.pets.pojo.entity.Emp">
+        INSERT INTO pet_emp
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="username != null and username != ''">
+                username,
+            </if>
+            <if test="name != null and name != ''">
+                name,
+            </if>
+            <if test="phone != null and phone != ''">
+                phone,
+            </if>
+            <if test="birth != null and birth != ''">
+                birth,
+            </if>
+            <if test="status != null and status >= 0">
+                status,
+            </if>
+            <if test="entrydate != null and entrydate != ''">
+                entrydate,
+            </if>
+            <if test="modifydate != null and modifydate != ''">
+                modifydate,
+            </if>
+            <if test="gender != null and gender >= ''">
+                gender,
+            </if>
+            <if test="image != null and image != ''">
+                image,
+            </if>
+            <if test="job != null and job >= 0">
+                job,
+            </if>
+        </trim>
+        <trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+            <if test="username != null and username != ''">
+                #{username},
+            </if>
+            <if test="name != null and name != ''">
+                #{name},
+            </if>
+            <if test="phone != null and phone != ''">
+                #{phone},
+            </if>
+            <if test="birth != null and birth != ''">
+                #{birth},
+            </if>
+            <if test="status != null and status >= 0">
+                #{status},
+            </if>
+            <if test="entrydate != null and entrydate != ''">
+                #{entrydate},
+            </if>
+            <if test="modifydate != null and modifydate != ''">
+                #{modifydate},
+            </if>
+            <if test="gender != null and gender >= 0">
+                #{gender},
+            </if>
+            <if test="image != null and image != ''">
+                #{image},
+            </if>
+            <if test="job != null and job >= 0">
+                #{job},
+            </if>
+        </trim>
+    </insert>
+
+    <select id="queryAllJob" resultType="java.lang.String">
+        select job_name
+        from emp_job
+        order by job_id
+    </select>
+
+    <select id="queryAllEmpByJob" resultType="com.pets.pojo.entity.Emp">
+        select id, name, phone, gender, birth, status, job, image
+        from pet_emp
+        <where>
+            status = 0
+            <if test="job != null and job >= 0">
+                and job = #{job}
+            </if>
+        </where>
+    </select>
+
+    <select id="checkAccountUniqueness" resultType="java.lang.Integer">
+        SELECT COUNT(1)
+        FROM pet_emp
+        WHERE username = #{username}
+    </select>
+
+    <select id="checkPhoneUniqueness" resultType="java.lang.Integer">
+        SELECT COUNT(1)
+        FROM pet_emp
+        WHERE phone = #{phone}
+    </select>
+
+    <update id="updateEmpStatus">
+        UPDATE pet_emp
+        SET status = #{status}
+        WHERE id = #{id}
+    </update>
+
+    <update id="updateEmp" parameterType="com.pets.pojo.entity.Emp">
+        UPDATE pet_emp
+        <set>
+            <if test="name != null">
+                name = #{name},
+            </if>
+            <if test="phone != null">
+                phone = #{phone},
+            </if>
+            <if test="gender != null and gender >= 0">
+                gender = #{gender},
+            </if>
+            <if test="job != null and job >= 0">
+                job = #{job},
+            </if>
+            <if test="birth != null">
+                birth = #{birth},
+            </if>
+            <if test="image != null">
+                image = #{image},
+            </if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <update id="deleteEmpImage">
+        UPDATE pet_emp
+        set image = ''
+        where id = #{id}
+    </update>
+
+    <update id="updatePassword">
+        UPDATE pet_emp
+        set password = #{password}
+        where id = #{id}
+    </update>
+
+</mapper>

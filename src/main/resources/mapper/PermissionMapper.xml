@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pets.mapper.PermissionMapper">
+
+    <select id="queryPermissionByRole" resultType="java.lang.String">
+        select ep.permission_name
+        from pet_platform.emp_job_permissions ejp
+            left join pet_platform.emp_permission  ep on ejp.permission_id = ep.permission_id
+        <where>
+            <if test="role != null and role >= 0">
+                ejp.job_id = #{role}
+            </if>
+        </where>
+    </select>
+</mapper>
