@@ -1,47 +1,84 @@
 # 宠物护理平台 - springboot 后端 
 
-## 工程的配置文件！💯💯💯
+## 工程的配置文件
 
 ### 1.application.yml文件
 <img src="https://github.com/user-attachments/assets/b8420a42-905d-4f9c-9eb5-cd3186fea8d3" width="210px" alt="高德地图秘钥">  
 
 ```java
 spring:
-profiles:
-active: dev
-servlet:
-#上传文件大小限制
-multipart:
-max-file-size: 100MB
-max-request-size:200MB
-web:
-H9日-日A999日寸NRx日8
-resources:
-cache:
-period: 0
-# 文件存储路径
-static-locations:SISTORAGE_PATH}
+  profiles:
+    active: dev
+  servlet:
+    # 上传文件大小限制
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 200MB
+  web:
+    resources:
+      cache:
+        period: 0
+      # 文件存储路径
+      static-locations: ${STORAGE_PATH}
+
 # 阿里云短信模版 注册，登录，修改个人信息模版
 phone:
-message:
-register: xxxxxXX
-Login: xxxxxxX
-change: xxxxxxX
-# 阿單云秘钥
+  message:
+    register: xxxx
+    login: xxxx
+    change: xxxxx
+
+# 阿里云秘钥
 aliyun:
-accessKeyId: xxxxxxX
-accessKeySecret:xxxxxXX
-```
-
-```python  
-for i or range(10):  
-    print(i)  
+  accessKeyId: xxxxx
+  accessKeySecret: xxxxxx
 ```
 
 
-### 2.application-dev.yml文件 
+### 2.application-dev.yml开发环境下文件 
 <img src="https://github.com/user-attachments/assets/1229803e-6138-40f6-86b2-9159298d4342" width="210px" alt="网络配置1"> 
 
+```java
+spring:
+  # 数据库配置
+  datasource:
+    url: jdbc:mysql://xxx.xxx.xxx.xxx:xxxx/pet_platform
+    username: xxxx
+    password: xxxxxx
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    jpa:
+      hibernate:
+        ddl-auto: update
+      database-platform: org.hibernate.dialect.MySQL8Dialect
+
+mybatis:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  mapper-locations: classpath:mapper/**/*.xml
+
+# 订单编号秘钥
+order:
+  key: xxxxxxxxxxxxxxxxxxx
+
+logging:
+  level:
+    org.springframework.web: DEBUG
+
+server:
+  port: 8080
+  address: 0.0.0.0
+
+# ip地址
+server-ip: xxx.xxx.xxx.xxx
+
+# 定时器
+scheduler:
+  cron:
+    expression: 0 0 * * * *
+```
+
+### 3.application-prod.ymls生产环境下文件 
+根据application-dev.yml更改即可
 
 
 ## 1.简介
