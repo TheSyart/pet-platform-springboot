@@ -1,18 +1,39 @@
 # 宠物护理平台 - springboot 后端 
 
-## 配置！💯💯💯
+## 工程的配置文件！💯💯💯
 
-### 1.AndroidMainifest.xml文件中  
-<img src="https://github.com/user-attachments/assets/9dbce39e-29cb-4189-b61f-a65f537de5b0" width="210px" alt="高德地图秘钥"> 
+### 1.application.yml文件
+<img src="https://github.com/user-attachments/assets/b8420a42-905d-4f9c-9eb5-cd3186fea8d3" width="210px" alt="高德地图秘钥">
+```spring:
+profiles:
+active: dev
+servlet:
+#上传文件大小限制
+multipart:
+max-file-size: 100MB
+max-request-size:200MB
+web:
+H9日-日A999日寸NRx日8
+resources:
+cache:
+period: 0
+# 文件存储路径
+static-locations:SISTORAGE_PATH}
+# 阿里云短信模版 注册，登录，修改个人信息模版
+phone:
+message:
+register: xxxxxXX
+Login: xxxxxxX
+change: xxxxxxX
+# 阿單云秘钥
+aliyun:
+accessKeyId: xxxxxxX
+accessKeySecret:xxxxxXX
+```
 
-### 2.网络配置（将下列文件中，使用自己的ip地址补全)
 
-app\src\main\res\xml\network_security_config.xml文件下  
-<img src="https://github.com/user-attachments/assets/32d94cf9-6c5e-4955-974e-b12ac63890a6" width="210px" alt="网络配置1"> 
-
-app\src\main\res\values\strings.xml文件下  
-<img src="https://github.com/user-attachments/assets/49bfce54-9f43-4da5-bc2c-1a1cbf95dfb5" width="210px" alt="网络配置2"> 
-
+### 2.application-dev.yml文件 
+<img src="https://github.com/user-attachments/assets/1229803e-6138-40f6-86b2-9159298d4342" width="210px" alt="网络配置1"> 
 
 
 
