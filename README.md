@@ -3,7 +3,8 @@
 ## 工程的配置文件！💯💯💯
 
 ### 1.application.yml文件
-<img src="https://github.com/user-attachments/assets/b8420a42-905d-4f9c-9eb5-cd3186fea8d3" width="210px" alt="高德地图秘钥">
+<img src="https://github.com/user-attachments/assets/b8420a42-905d-4f9c-9eb5-cd3186fea8d3" width="210px" alt="高德地图秘钥">  
+
 ```java
 spring:
 profiles:
@@ -30,6 +31,11 @@ change: xxxxxxX
 aliyun:
 accessKeyId: xxxxxxX
 accessKeySecret:xxxxxXX
+```
+
+```python  
+for i or range(10):  
+    print(i)  
 ```
 
 
