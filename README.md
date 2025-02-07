@@ -1,5 +1,8 @@
 # 宠物护理平台 - springboot 后端 
 
+[Github链接,查看web网页端源码\~\~\~](https://github.com/TheSyart/pet-platform-web.git)
+[Github链接,查看android移动端源码\~\~\~](https://github.com/TheSyart/pet-platform-android.git)
+
 ## 1.简介
 Spring Boot是一款轻量级、高效的Java开发框架，极大地简化了Spring应用的开发流程。它基于Spring框架，提供自动配置功能，可根据项目依赖自动设置好常见的配置，减少了开发者手动配置的工作量。
 
