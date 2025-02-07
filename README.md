@@ -10,8 +10,13 @@ Spring Boot是一款轻量级、高效的Java开发框架，极大地简化了Sp
 2.在安全性方面：首先使用JWT令牌保障用户信息安全，其次使用了阿里云短信服务为用户提供高效安全的登录校验服务，并且添加@Valid注解进行数据校验；其次我还使用了定时器，为订单进行状态的自动更新。最后使用WebSocket，接受客户和客服的不同种类型消息，实现两端实时通讯，将文字、图片、语音和视频(同时获取第一帧封面照片，优化消息展示，提高流畅度)进行存储。
 
 ## 3.照片展示  
-登录  
-<img src="https://github.com/user-attachments/assets/6484005e-6230-4414-a4fc-bae8adcf6d8b" width="210px">
+
+### springboot工程  
+<img src="https://github.com/user-attachments/assets/08847aa9-fc91-4dce-b6cf-ebb39bd739e3" width="700px">
+
+### andorid端概览  
+
+### web端概览  
 <img src="https://github.com/user-attachments/assets/3b11ccff-237e-485a-8501-2f8b9a449d78" width="210px">
 <img src="https://github.com/user-attachments/assets/a5060bbb-05e4-4929-a736-46fee70a4bec" width="210px">
 <img src="https://github.com/user-attachments/assets/a5210cea-a165-457a-a89a-7d6b4b31f0ba" width="210px">
