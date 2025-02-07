@@ -12,9 +12,24 @@ Spring Boot是一款轻量级、高效的Java开发框架，极大地简化了Sp
 ## 3.照片展示  
 
 ### springboot工程  
-<img src="https://github.com/user-attachments/assets/08847aa9-fc91-4dce-b6cf-ebb39bd739e3" width="700px">
+<img src="https://github.com/user-attachments/assets/a5dbbcb6-b21e-48ca-af0a-3f7c114f1b85" width="700px">
 
 ### andorid端概览  
+<img src="https://github.com/user-attachments/assets/6730fa93-2758-4fe8-9d12-b3e63fc46dbb" width="210px" alt="登录页面截图">  
+<img src="https://github.com/user-attachments/assets/70babe15-135a-4a62-9b4d-d71ebef77397" width="210px" alt="主页面功能截图 1">
+<img src="https://github.com/user-attachments/assets/12c8134e-adad-4b8d-a6e0-f3b73f928717" width="210px" alt="主页面功能截图 2">
+<img src="https://github.com/user-attachments/assets/8b8c23d1-8075-4ad4-accd-67da1c476f17" width="210px" alt="主页面功能截图 3">
+<img src="https://github.com/user-attachments/assets/a502e3cc-fb87-4feb-8cfa-c0c8fef0538e" width="210px" alt="主页面功能截图 4">
+<img src="https://github.com/user-attachments/assets/622f4099-8b25-4ff2-8997-40e383351548" width="210px" alt="主页面功能截图 5">
+<img src="https://github.com/user-attachments/assets/3548b397-64b4-48cc-90e1-9dca94202e23" width="210px" alt="主页面功能截图 6">
+<img src="https://github.com/user-attachments/assets/9c67fb30-fb24-48a2-b0f2-1b08970e551b" width="210px" alt="主页面功能截图 7">
+<img src="https://github.com/user-attachments/assets/a6f4d999-87b5-4d66-8d00-fe5c0b590635" width="210px" alt="主页面功能截图 8">
+<img src="https://github.com/user-attachments/assets/09847bfe-9a38-4b8f-84b0-c0064edfd097" width="210px" alt="主页面功能截图 9">
+<img src="https://github.com/user-attachments/assets/7b218753-0c66-47b2-8a86-c8939a3cc188" width="210px" alt="主页面功能截图 10">
+<img src="https://github.com/user-attachments/assets/1b0e2894-5634-451f-9715-efe7c0415851" width="210px" alt="主页面功能截图 11">
+<img src="https://github.com/user-attachments/assets/a28d662b-6834-4817-a5ba-90e330dead4a" width="210px" alt="地址页面截图 1">
+<img src="https://github.com/user-attachments/assets/a78f7f39-c440-437c-96e1-97d48f300442" width="210px" alt="地址页面截图 2">
+<img src="https://github.com/user-attachments/assets/5e9945da-e496-420e-b8b0-601ca8331e32" width="210px" alt="客服咨询页面截图 1">
 
 ### web端概览  
 <img src="https://github.com/user-attachments/assets/3b11ccff-237e-485a-8501-2f8b9a449d78" width="210px">
