@@ -4,7 +4,8 @@
 
 ### 1.application.yml文件
 <img src="https://github.com/user-attachments/assets/b8420a42-905d-4f9c-9eb5-cd3186fea8d3" width="210px" alt="高德地图秘钥">
-```spring:
+```java
+spring:
 profiles:
 active: dev
 servlet:
