@@ -1,6 +1,7 @@
 # 宠物护理平台 - springboot 后端 
 
-## 工程的配置文件
+## 工程的配置文件  
+在Spring\pet\src\main\resources\下新建配置文件即可
 
 ### 1.application.yml文件
 <img src="https://github.com/user-attachments/assets/b8420a42-905d-4f9c-9eb5-cd3186fea8d3" width="210px" alt="高德地图秘钥">  
